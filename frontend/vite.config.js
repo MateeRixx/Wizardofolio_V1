@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), cloudflare()],
 
   // ✅ Set to '/' for root deployment (Vercel, Netlify, etc.)
   // Change to '/repo-name/' if deploying to GitHub Pages in a subdirectory
