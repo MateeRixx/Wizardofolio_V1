@@ -67,12 +67,13 @@ const useTypewriter = (text, { speed = 60, startDelay = 0 } = {}) => {
 const HeroTitle = ({
   title    = 'Summohith',
   subtitle = 'Crafting visuals that captivate.',
+  animDelay = 0.1,
 }) => {
   const letters  = title.split('');
   const oIndex   = letters.findIndex(l => l.toLowerCase() === 'o');
   const spanRefs = useRef([]);
 
-  /* GSAP letter stagger */
+  /* GSAP letter stagger — uses animDelay prop */
   useEffect(() => {
     const els = spanRefs.current.filter(Boolean);
     gsap.set(els, { opacity: 0, y: 36 });
@@ -82,11 +83,11 @@ const HeroTitle = ({
       duration: 0.65,
       stagger:  0.07,
       ease:     'power3.out',
-      delay:    0.2,
+      delay:    animDelay,
     });
-  }, []);
+  }, [animDelay]);
 
-  const typedSubtitle = useTypewriter(subtitle, { speed: 55, startDelay: 1100 });
+  const typedSubtitle = useTypewriter(subtitle, { speed: 55, startDelay: animDelay * 1000 + 900 });
   const isTypingDone  = typedSubtitle.length >= subtitle.length;
 
   return (

@@ -18,6 +18,7 @@ function App() {
   const [activeSkill, setActiveSkill] = useState(null)
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [revealed, setRevealed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // STANDALONE GALLERY VIEW CHECK
   const isGalleryView = window.location.search.includes('gallery=true');
@@ -79,11 +80,11 @@ function App() {
     setData({ ...data, skills: updatedSkills });
   }
 
-  /* ---- GSAP hero entrance — fires after reveal ---- */
+  /* ---- GSAP hero entrance — fires after reveal with delay ---- */
   useEffect(() => {
     if (!revealed) return
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline()
+      const tl = gsap.timeline({ delay: 2 })
 
       /* nav items drop in */
       tl.fromTo(
@@ -91,24 +92,12 @@ function App() {
         { opacity: 0, y: -14 },
         { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out' }
       )
-      /* hero title sweeps up */
-      tl.fromTo(
-        '.hero-title',
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' },
-        '-=0.2'
-      )
-      tl.fromTo(
-        '.hero-sub',
-        { opacity: 0, y: 35 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
-        '-=0.75'
-      )
+      /* "explore below" hint */
       tl.fromTo(
         '.hero-hint',
         { opacity: 0 },
-        { opacity: 1, duration: 0.9, ease: 'power2.out' },
-        '-=0.6'
+        { opacity: 0.4, duration: 0.9, ease: 'power2.out' },
+        '-=0.3'
       )
     }, heroRef)
 
@@ -147,18 +136,21 @@ function App() {
         <nav className="glass-nav">
           <div style={{
             maxWidth: '1200px', margin: '0 auto',
-            padding: '1.4rem 2rem',
+            padding: '1rem 1.5rem',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center'
           }}>
+            {/* Logo */}
             <span className="nav-link" style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1.5rem', fontWeight: 600,
-              color: 'var(--text-primary)', letterSpacing: '0.05em'
+              fontSize: '1.4rem', fontWeight: 600,
+              color: 'var(--text-primary)', letterSpacing: '0.05em',
+              cursor: 'default', userSelect: 'none',
             }}>
               {data.hero.title}
             </span>
 
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {/* Desktop links */}
+            <div className="nav-desktop-links">
               {data.skills.map(s => (
                 <button
                   key={s.id}
@@ -173,17 +165,50 @@ function App() {
                   {s.shortLabel}
                 </button>
               ))}
-              <button 
-                onClick={() => {
-                   const el = document.getElementById('contact');
-                   if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="nav-link btn-glass" style={{ marginLeft: '0.5rem' }}
+              <button
+                onClick={() => { const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
+                className="nav-link btn-glass" style={{ marginLeft: '0.25rem' }}
               >
                 Contact
               </button>
             </div>
+
+            {/* Mobile hamburger */}
+            <button
+              className="hamburger-btn"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileMenuOpen(o => !o)}
+            >
+              <span style={{ transform: mobileMenuOpen ? 'rotate(45deg) translate(4px, 4px)' : 'none', transition: 'transform 0.3s' }} />
+              <span style={{ opacity: mobileMenuOpen ? 0 : 1, transition: 'opacity 0.3s' }} />
+              <span style={{ transform: mobileMenuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none', transition: 'transform 0.3s' }} />
+            </button>
           </div>
+
+          {/* Mobile dropdown */}
+          {mobileMenuOpen && (
+            <div className="nav-mobile-menu">
+              {data.skills.map(s => (
+                <button
+                  key={s.id}
+                  className="btn-glass"
+                  style={{
+                    color: activeSkill === s.id ? s.color : 'var(--text-secondary)',
+                    borderColor: activeSkill === s.id ? s.color : 'rgba(221,175,144,0.15)',
+                  }}
+                  onClick={() => { handleActivate(s.id); setMobileMenuOpen(false); }}
+                >
+                  {s.shortLabel}
+                </button>
+              ))}
+              <button
+                className="btn-glass"
+                onClick={() => { const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }}
+              >
+                Contact
+              </button>
+            </div>
+          )}
         </nav>
 
         <header style={{
@@ -191,12 +216,14 @@ function App() {
           display: 'flex', flexDirection: 'column',
           justifyContent: 'center', alignItems: 'center',
           textAlign: 'center',
-          padding: '4rem 2rem 2rem',
+          padding: 'clamp(5rem, 12vw, 8rem) 1.5rem 2rem',
           position: 'relative'
         }}>
           <HeroTitle
+            key={revealed ? 'revealed' : 'hidden'}
             title={data.hero.title}
             subtitle={data.hero.subtitle}
+            animDelay={revealed ? 2 : 9999}
           />
           <p
             className="hero-hint"

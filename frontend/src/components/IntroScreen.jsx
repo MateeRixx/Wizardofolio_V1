@@ -2,102 +2,79 @@ import { useRef, useEffect } from 'react'
 import { gsap } from 'gsap'
 
 /**
- * IntroScreen — agency-style letter-split + curtain-wipe reveal
- * Similar to dnaprojecten.nl approach:
- *  1. Letters stagger in one by one
- *  2. Role subtitle fades in
- *  3. Two curtain panels (top + bottom) split apart automatically
- *  4. onReveal() fires → main site animates in
+ * IntroScreen — greeting + quote + click to reveal
+ * ─────────────────────────────────────────────────
+ * • Greeting fades in
+ * • Quote fades in below
+ * • "Enter" button pulses — click triggers curtain wipe
  *
- * Props:
- *   onReveal()  — called when exit animation finishes
+ * ✏️  EDIT YOUR TEXT HERE:
  */
+const GREETING = ''
+const QUOTE    = '"Magic is something you make"'
+const NAME_TAG = '~ Summohith'
+// ─────────────────────────────────────────────────
+
 export default function IntroScreen({ onReveal }) {
   const topPanelRef    = useRef(null)
   const botPanelRef    = useRef(null)
-  const lettersRef     = useRef([])
-  const subtitleRef    = useRef(null)
-  const skipRef        = useRef(null)
+  const greetRef       = useRef(null)
+  const quoteRef       = useRef(null)
+  const nameTagRef     = useRef(null)
+  const btnRef         = useRef(null)
+  const ringRef        = useRef(null)
   const hasRevealedRef = useRef(false)
 
-  const NAME = 'TIME TO MAKE THE MAGIC HAPPEN'
-  const ROLE = ''
-
-  /* ── Run the full intro sequence ──────────────────────────────────── */
+  /* ── Entrance sequence ───────────────────────────────────────────── */
   useEffect(() => {
+    document.body.style.overflow = 'hidden'
+
     const tl = gsap.timeline()
 
-    /* 1. Letters drop in with stagger */
-    tl.fromTo(
-      lettersRef.current,
-      { y: '110%', opacity: 0 },
-      { y: '0%', opacity: 1, duration: 0.75, ease: 'power4.out', stagger: 0.055 }
+    tl.fromTo(greetRef.current,
+      { opacity: 0, y: 22 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }
     )
-
-    /* 2. Subtitle fades up */
-    tl.fromTo(
-      subtitleRef.current,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
-      '-=0.3'
+    tl.fromTo(quoteRef.current,
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' },
+      '-=0.5'
     )
-
-    /* 3. Scroll hint appears */
-    tl.fromTo(
-      skipRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
-      '+=0.15'
+    tl.fromTo(nameTagRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6, ease: 'power2.out' },
+      '-=0.4'
     )
-
-    /* 4. Bounce the arrow repeatedly once visible */
-    tl.to(skipRef.current?.querySelector?.('.arrow'), {
-      y: 7,
-      repeat: -1,
-      yoyo: true,
-      duration: 0.65,
-      ease: 'sine.inOut',
-    }, '-=0.1')
-
-    /* 5. After text is in, listen for scroll / touch to trigger reveal */
-    const onScroll = () => triggerReveal()
-    let touchStartY = 0
-    const onTouchStart = (e) => { touchStartY = e.touches[0].clientY }
-    const onTouchMove  = (e) => { if (touchStartY - e.touches[0].clientY > 30) triggerReveal() }
-
-    tl.add(() => {
-      window.addEventListener('wheel',      onScroll,     { passive: true, once: true })
-      window.addEventListener('touchstart', onTouchStart, { passive: true })
-      window.addEventListener('touchmove',  onTouchMove,  { passive: true })
-    })
+    tl.fromTo(btnRef.current,
+      { opacity: 0, scale: 0.88 },
+      { opacity: 1, scale: 1, duration: 0.7, ease: 'back.out(1.5)' },
+      '-=0.2'
+    )
+    /* pulsing ring on button */
+    tl.to(ringRef.current, {
+      scale: 1.45, opacity: 0,
+      duration: 1.6, ease: 'power2.out',
+      repeat: -1, repeatDelay: 0.5,
+    }, '-=0.3')
 
     return () => {
+      document.body.style.overflow = ''
       tl.kill()
-      window.removeEventListener('wheel',      onScroll)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove',  onTouchMove)
     }
-  }, []) // eslint-disable-line
+  }, [])
 
-  /* ── Curtain wipe ───────────────────────────────────────────────── */
+  /* ── Curtain wipe on click ───────────────────────────────────────── */
   const triggerReveal = () => {
     if (hasRevealedRef.current) return
     hasRevealedRef.current = true
+    document.body.style.overflow = ''
+    window.scrollTo(0, 0)
 
     const tl = gsap.timeline({ onComplete: onReveal })
 
-    /* Letters flick toward centre and out */
-    tl.to(lettersRef.current, {
-      y: '-10px',
-      opacity: 0,
-      duration: 0.4,
-      ease: 'power2.in',
-      stagger: { each: 0.025, from: 'center' },
+    tl.to([greetRef.current, quoteRef.current, nameTagRef.current, btnRef.current], {
+      opacity: 0, y: -12, duration: 0.35, ease: 'power2.in', stagger: 0.04,
     })
-    tl.to(subtitleRef.current, { opacity: 0, duration: 0.25 }, '<')
-    tl.to(skipRef.current,     { opacity: 0, duration: 0.2  }, '<')
-
-    /* Top panel slides up, bottom panel slides down */
     tl.to(topPanelRef.current, { yPercent: -100, duration: 0.85, ease: 'power4.inOut' }, '-=0.05')
     tl.to(botPanelRef.current, { yPercent:  100, duration: 0.85, ease: 'power4.inOut' }, '<')
   }
@@ -117,84 +94,94 @@ export default function IntroScreen({ onReveal }) {
         height: '51%', background: '#050301', zIndex: 2,
       }} />
 
-      {/* ── Content (sits between the two panels) ── */}
+      {/* ── Content ── */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 3,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        gap: '1.2rem', pointerEvents: 'none',
+        padding: '2rem',
+        gap: '0',
+        pointerEvents: 'none',
       }}>
 
-        {/* Name — each letter has its own overflow:hidden mask */}
-        <div style={{ display: 'flex', gap: 'clamp(2px, 0.5vw, 8px)', overflow: 'hidden' }}
-             aria-label={NAME}>
-          {NAME.split('').map((char, i) => (
-            <div key={i} style={{ overflow: 'hidden', display: 'inline-block' }}>
-              <span
-                ref={el => { lettersRef.current[i] = el }}
-                style={{
-                  display: 'inline-block',
-                  fontFamily: 'var(--font-display, serif)',
-                  fontSize: 'clamp(2.6rem, 8.5vw, 7.5rem)',
-                  fontWeight: 700,
-                  color: '#DDAF90',
-                  letterSpacing: '0.07em',
-                  lineHeight: 1,
-                  opacity: 0,
-                  willChange: 'transform, opacity',
-                }}
-              >
-                {char}
-              </span>
-            </div>
-          ))}
-        </div>
+        {/* Greeting — only rendered when non-empty */}
+        {GREETING ? (
+          <p ref={greetRef} style={{
+            fontFamily: 'var(--font-body, sans-serif)',
+            fontSize: 'clamp(0.65rem, 1.5vw, 0.8rem)',
+            letterSpacing: '0.35em',
+            textTransform: 'uppercase',
+            color: '#CE8715',
+            opacity: 0,
+            margin: '0 0 2rem 0',
+          }}>
+            {GREETING}
+          </p>
+        ) : <div ref={greetRef} />}
 
-        {/* Subtitle */}
-        <p ref={subtitleRef} style={{
-          fontFamily: 'var(--font-body, sans-serif)',
-          fontSize: 'clamp(0.6rem, 1.4vw, 0.8rem)',
-          letterSpacing: '0.3em',
-          color: 'rgba(221,175,144,0.45)',
-          textTransform: 'uppercase',
-          opacity: 0, margin: 0,
+        {/* Quote */}
+        <blockquote ref={quoteRef} style={{
+          fontFamily: 'var(--font-display, serif)',
+          fontSize: 'clamp(1.2rem, 4vw, 2.4rem)',
+          fontWeight: 500,
+          fontStyle: 'italic',
+          color: '#DDAF90',
+          textAlign: 'center',
+          maxWidth: 'min(680px, 90vw)',
+          lineHeight: 1.5,
+          margin: 0,
+          padding: '0 1rem',
+          opacity: 0,
         }}>
-          {ROLE}
+          {QUOTE}
+        </blockquote>
+
+        {/* Name tag */}
+        <p ref={nameTagRef} style={{
+          fontFamily: 'var(--font-body, sans-serif)',
+          fontSize: 'clamp(0.65rem, 1.3vw, 0.78rem)',
+          letterSpacing: '0.2em',
+          color: 'rgba(221,175,144,0.4)',
+          margin: '1.2rem 0 3rem 0',
+          opacity: 0,
+        }}>
+          {NAME_TAG}
         </p>
 
-        {/* Thin vertical line accent */}
-        <div style={{
-          width: '1.5px', height: '44px',
-          background: 'linear-gradient(to bottom, rgba(206,135,21,0.55), transparent)',
-          marginTop: '0.2rem',
-        }} />
-      </div>
-
-      {/* ── Scroll hint (centered bottom, clickable too) ── */}
-      <div
-        ref={skipRef}
-        onClick={triggerReveal}
-        style={{
-          position: 'fixed', bottom: '2.2rem', left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 10, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', gap: '0.45rem',
-          opacity: 0, cursor: 'pointer',
-        }}
-      >
-        <span style={{
-          fontFamily: 'var(--font-body, sans-serif)',
-          fontSize: '0.62rem', letterSpacing: '0.3em',
-          color: 'rgba(221,175,144,0.4)', textTransform: 'uppercase',
-        }}>
-          Scroll to reveal
-        </span>
-        <span className="arrow" style={{
-          display: 'block', width: '18px', height: '18px',
-          borderRight: '1.5px solid rgba(206,135,21,0.5)',
-          borderBottom: '1.5px solid rgba(206,135,21,0.5)',
-          transform: 'rotate(45deg)',
-        }} />
+        {/* Enter button — needs pointer events */}
+        <div style={{ position: 'relative', pointerEvents: 'all' }}>
+          <div ref={ringRef} style={{
+            position: 'absolute', inset: '-14px',
+            borderRadius: '50%',
+            border: '1.5px solid rgba(206,135,21,0.4)',
+            transformOrigin: 'center',
+          }} />
+          <button
+            ref={btnRef}
+            onClick={triggerReveal}
+            style={{
+              width: 'clamp(80px, 18vw, 96px)', height: 'clamp(80px, 18vw, 96px)', borderRadius: '50%',
+              background: 'transparent',
+              border: '1.5px solid rgba(206,135,21,0.6)',
+              color: '#CE8715',
+              fontFamily: 'var(--font-display, serif)',
+              fontSize: '0.88rem', letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              cursor: 'pointer', opacity: 0,
+              transition: 'background 0.3s, box-shadow 0.3s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background  = 'rgba(206,135,21,0.1)'
+              e.currentTarget.style.boxShadow   = '0 0 28px rgba(206,135,21,0.2)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.boxShadow  = 'none'
+            }}
+          >
+            Enter
+          </button>
+        </div>
       </div>
     </div>
   )
