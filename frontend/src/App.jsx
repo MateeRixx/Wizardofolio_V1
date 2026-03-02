@@ -10,12 +10,14 @@ import ProjectUploadModal from './components/ProjectUploadModal'
 import { GridView } from './components/PhotoShowcase'
 import AboutSection from './components/AboutSection'
 import ContactSection from './components/ContactSection'
+import IntroScreen from './components/IntroScreen'
 import './index.css'
 
 function App() {
   const [data, setData] = useState(initialData)
   const [activeSkill, setActiveSkill] = useState(null)
   const [isUploadOpen, setIsUploadOpen] = useState(false)
+  const [revealed, setRevealed] = useState(false)
 
   // STANDALONE GALLERY VIEW CHECK
   const isGalleryView = window.location.search.includes('gallery=true');
@@ -77,35 +79,41 @@ function App() {
     setData({ ...data, skills: updatedSkills });
   }
 
-  /* ---- GSAP hero entrance ---- */
+  /* ---- GSAP hero entrance — fires after reveal ---- */
   useEffect(() => {
+    if (!revealed) return
     const ctx = gsap.context(() => {
-      gsap.fromTo(
+      const tl = gsap.timeline()
+
+      /* nav items drop in */
+      tl.fromTo(
+        '.nav-link',
+        { opacity: 0, y: -14 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out' }
+      )
+      /* hero title sweeps up */
+      tl.fromTo(
         '.hero-title',
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' },
+        '-=0.2'
       )
-      gsap.fromTo(
+      tl.fromTo(
         '.hero-sub',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.25 }
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+        '-=0.75'
       )
-      gsap.fromTo(
+      tl.fromTo(
         '.hero-hint',
         { opacity: 0 },
-        { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.7 }
-      )
-
-      /* stagger nav items */
-      gsap.fromTo(
-        '.nav-link',
-        { opacity: 0, y: -12 },
-        { opacity: 1, y: 0,  duration: 0.6, stagger: 0.1, ease: 'power2.out' }
+        { opacity: 1, duration: 0.9, ease: 'power2.out' },
+        '-=0.6'
       )
     }, heroRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [revealed])
 
   /* ---- Smooth scroll into sections when clicking a skill ---- */
   const handleActivate = (id) => {
@@ -122,15 +130,18 @@ function App() {
 
   return (
     <>
+      {/* ── Intro splash screen ── */}
+      {!revealed && <IntroScreen onReveal={() => setRevealed(true)} />}
+
       {/* Animated background */}
-      <div className="bg-blobs">
+      <div className="bg-blobs" style={{ opacity: revealed ? 1 : 0, transition: 'opacity 0.6s ease' }}>
         <div className="blob blob-1" />
         <div className="blob blob-2" />
         <div className="blob blob-3" />
       </div>
       <div className="bg-noise" />
 
-      <div ref={heroRef} className="App">
+      <div ref={heroRef} className="App" style={{ opacity: revealed ? 1 : 0 }}>
 
         {/* ===== NAVIGATION ===== */}
         <nav className="glass-nav">
