@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 
 const GOLD = '#CE8715';
@@ -6,6 +6,17 @@ const GOLD = '#CE8715';
 const AboutSection = () => {
     const sectionRef = useRef(null);
     const imgRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+    const [isTablet, setIsTablet] = useState(() => window.innerWidth < 1024);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            setIsTablet(window.innerWidth < 1024);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -31,19 +42,20 @@ const AboutSection = () => {
 
     return (
         <section ref={sectionRef} id="about" style={{
-            padding: '10rem 2rem',
+            padding: isMobile ? '5rem 1.2rem' : '10rem 2rem',
             maxWidth: '1200px',
             margin: '0 auto',
-            color: 'var(--text-primary)'
+            color: 'var(--text-primary)',
+            overflowX: 'hidden'
         }}>
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1.2fr',
-                gap: '5rem',
+                gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1fr 1.2fr',
+                gap: isMobile ? '2.5rem' : '5rem',
                 alignItems: 'start'
             }}>
                 {/* ── Left: Photo with Stylized Frame ── */}
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', maxWidth: isMobile ? '280px' : '100%', margin: isMobile ? '0 auto' : '0' }}>
                     <div style={{
                         position: 'relative',
                         zIndex: 2,
@@ -51,7 +63,8 @@ const AboutSection = () => {
                         overflow: 'hidden',
                         aspectRatio: '5/6',
                         border: `1px solid ${GOLD}44`,
-                        background: '#111'
+                        background: '#111',
+                        width: '100%'
                     }}>
                         <img 
                             ref={imgRef}
@@ -85,7 +98,7 @@ const AboutSection = () => {
                             letterSpacing: '4px', color: GOLD, opacity: 0.7, display: 'block', marginBottom: '1rem'
                         }}>00 / ABOUT ME</span>
                         <h2 style={{
-                            fontFamily: 'var(--font-display)', fontSize: '4rem',
+                            fontFamily: 'var(--font-display)', fontSize: isMobile ? '2.4rem' : '4rem',
                             fontWeight: 600, letterSpacing: '0.03em', lineHeight: 1.1
                         }}>Designing the <span style={{ color: GOLD }}>Future</span></h2>
                         <p style={{
@@ -99,7 +112,7 @@ const AboutSection = () => {
                     </div>
 
                     {/* Stats / Achievements */}
-                    <div className="about-reveal" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', opacity: 0 }}>
+                    <div className="about-reveal" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: isMobile ? '1rem' : '2rem', opacity: 0 }}>
                         <div>
                             <h3 style={{ color: GOLD, fontSize: '2.4rem', fontFamily: 'var(--font-display)' }}>329%</h3>
                             <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '2px', opacity: 0.6 }}>Engagement Boost</p>
@@ -112,8 +125,8 @@ const AboutSection = () => {
 
                     {/* Achievements & Experience Grid */}
                     <div className="about-reveal" style={{ 
-                        display: 'grid', gridTemplateColumns: '1fr 1fr', 
-                        gap: '3rem', borderTop: '1px solid rgba(221,175,144,0.1)', 
+                        display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                        gap: isMobile ? '2rem' : '3rem', borderTop: '1px solid rgba(221,175,144,0.1)', 
                         paddingTop: '3rem', opacity: 0
                     }}>
                         <div>
@@ -153,7 +166,7 @@ const AboutSection = () => {
                     {/* Education Row */}
                     <div className="about-reveal" style={{ borderTop: '1px solid rgba(221,175,144,0.1)', paddingTop: '2rem', opacity: 0 }}>
                          <h4 style={{ fontSize: '0.8rem', letterSpacing: '2px', color: GOLD, textTransform: 'uppercase', marginBottom: '1rem' }}>Education</h4>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '0.4rem' : '0' }}>
                             <div style={{ fontSize: '1rem', fontWeight: 600 }}>B.Tech. in Information Technology</div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>RGIPT · 2023 - 2027</div>
                          </div>
@@ -163,9 +176,9 @@ const AboutSection = () => {
             
             {/* ── Skills / Tools Row ── */}
             <div className="about-reveal" style={{ 
-                marginTop: '6rem', padding: '2rem', 
+                marginTop: isMobile ? '3rem' : '6rem', padding: isMobile ? '1.5rem 1rem' : '2rem', 
                 border: '1px solid rgba(221,175,144,0.1)', borderRadius: '16px',
-                display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center',
+                display: 'flex', flexWrap: 'wrap', gap: isMobile ? '0.8rem' : '2rem', justifyContent: 'center',
                 opacity: 0 // Start hidden for GSAP
             }}>
                 {['Photoshop', 'Lightroom', 'Illustrator', 'Premiere Pro', 'After Effects', 'DaVinci Resolve', 'Figma', 'Canva','Affinity'].map(tool => (
