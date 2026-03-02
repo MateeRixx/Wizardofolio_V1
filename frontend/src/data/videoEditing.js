@@ -1,16 +1,4 @@
-/* ─────────────────────────────────────────────────────────────────────
-   videoEditing.js  —  Video Editing section
 
-   HOW TO ADD A PROJECT:
-   1. Drop your video + thumbnail into:
-        public/works/video-editing/
-   2. Supported video formats: .mp4, .webm
-   3. File path examples:
-        video at     public/works/video-editing/reel.mp4
-        thumbnail at public/works/video-editing/reel-thumb.jpg
-        paths      → "/works/video-editing/reel.mp4"
-                     "/works/video-editing/reel-thumb.jpg"
-───────────────────────────────────────────────────────────────────── */
 export const videoEditing = {
   id:          "video-editing",
   label:       "Video Editing",
@@ -22,8 +10,8 @@ export const videoEditing = {
   items: [
     {
       id:          "ve-1",
-      title:       "Showreel Short 1",
-      description: "A dynamic short-form reel showcasing creative cuts and transitions.",
+      title:       "Tarrif Effect on Indian Market",
+      description: "An instagram reel explaning the effect of tarif on indian market and economy.",
       type:        "youtube",
       portrait:    true,
       tags:        ["Shorts", "Editing", "Reel"],
@@ -32,18 +20,18 @@ export const videoEditing = {
     },
     {
       id:          "ve-2",
-      title:       "Creative Edit 1",
-      description: "Visual exploration of kinetic effects and overlays in commercial editing.",
+      title:       "Travel Video ",
+      description: "A travel vlog of trip to uttrakhand",
       type:        "youtube",
       portrait:    false,
-      tags:        ["Editing", "VFX", "After Effects"],
+      tags:        ["Editing", "travel", "davinci"],
       url:         "https://www.youtube.com/embed/hkgb0kIROlA",
       thumbnail:   "https://img.youtube.com/vi/hkgb0kIROlA/maxresdefault.jpg",
     },
     {
       id:          "ve-3",
-      title:       "Creative Edit 2",
-      description: "Full-length edit focusing on pacing, rhythm, and color harmony.",
+      title:       "Jar of Time",
+      description: "First shortfilm about my passiono of taking pictures.",
       type:        "youtube",
       portrait:    false,
       tags:        ["Commercial", "Pacing", "Color Grade"],
@@ -52,8 +40,8 @@ export const videoEditing = {
     },
     {
       id:          "ve-4",
-      title:       "Showreel Short 2",
-      description: "Motion-focused short reel with fluid animation and snappy cuts.",
+      title:       "Drop in Tata Shares ",
+      description: "Instagram reel explaining reason behind the drop in shares prices of tata industries.",
       type:        "youtube",
       portrait:    true,
       tags:        ["Shorts", "Motion", "Animation"],
@@ -62,8 +50,8 @@ export const videoEditing = {
     },
     {
       id:          "ve-5",
-      title:       "Showreel Short 3",
-      description: "Short-form cinematic edit with precise timing and visual rhythm.",
+      title:       "Tarrif Update",
+      description: "Short-form content explainign about tarrif ",
       type:        "youtube",
       portrait:    true,
       tags:        ["Shorts", "Cinematic", "Editing"],
@@ -72,18 +60,18 @@ export const videoEditing = {
     },
     {
       id:          "ve-6",
-      title:       "Showreel Short 4",
-      description: "Dynamic short showcasing color grading and creative transitions.",
+      title:       "End of 2025",
+      description: "A personal project for the end of 2025",
       type:        "youtube",
       portrait:    true,
-      tags:        ["Shorts", "Color Grade", "Transitions"],
+      tags:        ["Shorts", "Color Grade", "newyear"],
       url:         "https://www.youtube.com/embed/d5K3ipvd4RY",
       thumbnail:   "https://img.youtube.com/vi/d5K3ipvd4RY/maxresdefault.jpg",
     },
     {
       id:          "ve-7",
-      title:       "Showreel Short 5",
-      description: "High-energy short reel with impactful cuts and visual storytelling.",
+      title:       "GFG Orientation Video",
+      description: "High-energy short for inviting students to join the orientation event .",
       type:        "youtube",
       portrait:    true,
       tags:        ["Shorts", "Storytelling", "Reel"],
