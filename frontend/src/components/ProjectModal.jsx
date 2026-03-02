@@ -154,27 +154,36 @@ const ProjectModal = ({ project, onClose }) => {
             project.portrait ? (
               // 9:16 portrait for Shorts
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ position: 'relative', width: '320px', paddingTop: 'calc(320px * 16/9)', borderRadius: '14px', overflow: 'hidden' }}>
-                  <iframe
-                    src={`${project.url}?autoplay=1&rel=0&modestbranding=1`}
-                    title={project.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', borderRadius: '14px' }}
-                  />
-                </div>
-              </div>
-            ) : (
-              // 16:9 landscape for regular videos
-              <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: '14px', overflow: 'hidden' }}>
                 <iframe
-                  src={`${project.url}?autoplay=1&rel=0&modestbranding=1`}
+                  src={`${project.url}?rel=0&modestbranding=1`}
                   title={project.title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', borderRadius: '14px' }}
+                  style={{
+                    width: '100%',
+                    maxWidth: '340px',
+                    aspectRatio: '9/16',
+                    border: 'none',
+                    borderRadius: '14px',
+                    display: 'block',
+                  }}
                 />
               </div>
+            ) : (
+              // 16:9 landscape for regular videos
+              <iframe
+                src={`${project.url}?rel=0&modestbranding=1`}
+                title={project.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  width: '100%',
+                  aspectRatio: '16/9',
+                  border: 'none',
+                  borderRadius: '14px',
+                  display: 'block',
+                }}
+              />
             )
           )}
         </div>
